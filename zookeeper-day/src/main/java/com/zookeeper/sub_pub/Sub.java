@@ -19,7 +19,7 @@ public class Sub {
 			e.printStackTrace();
 		}
 		listener.getListenable().addListener(() -> {
-			System.out.println(listener.getCurrentData().getData());
+			System.out.println(new String(listener.getCurrentData().getData()));
 		});
 		Thread.sleep(Integer.MAX_VALUE);         
 	}

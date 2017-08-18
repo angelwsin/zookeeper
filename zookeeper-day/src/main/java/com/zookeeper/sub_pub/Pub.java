@@ -1,9 +1,12 @@
 package com.zookeeper.sub_pub;
 
+import java.util.Objects;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CreateBuilder;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.zookeeper.data.Stat;
 
 public class Pub {
 	
@@ -14,9 +17,12 @@ public class Pub {
 		                       .retryPolicy(new ExponentialBackoffRetry(300,4))
 		                       .build();
 		pub.start();
-		CreateBuilder builder = pub.create();
-		builder.creatingParentsIfNeeded().forPath("/data/db", "db".getBytes());
-		
+		Stat stat = pub.checkExists().forPath("/data/db");
+		if(Objects.isNull(stat)){
+		    CreateBuilder builder = pub.create();
+		    //默认创建持久结点
+	        builder.creatingParentsIfNeeded().forPath("/data/db", "db".getBytes()); 
+		}
 		Thread.sleep(Integer.MAX_VALUE);
 	}
 
