@@ -24,14 +24,14 @@ public class ZkClient implements Watcher{
 		 * sendThread = new SendThread();  sendThread线程 负责 连接,心跳,和接收发送数据
           eventThread = new EventThread(); 接收的数据 组织成Event事件 丢到 EventThread线程处理
 		 */
-		ZooKeeper zkClient  = new ZooKeeper("192.168.1.125:2181", 500, new ZkClient());
+		ZooKeeper zkClient  = new ZooKeeper("localhost:2181", 500, new ZkClient());
 		System.out.println(zkClient.getState());
 		connetionLath.await();
 		
 		/**
 		 * 传入SessionId SessionPasswd 为了复用上面的会话
 		 */
-		ZooKeeper zkClient1   = new ZooKeeper("192.168.1.125:2181", 500,new ZkClient() , zkClient.getSessionId(), zkClient.getSessionPasswd());
+		ZooKeeper zkClient1   = new ZooKeeper("localhost:2181", 500,new ZkClient() , zkClient.getSessionId(), zkClient.getSessionPasswd());
 		
 		Thread.sleep(Integer.MAX_VALUE);
 		

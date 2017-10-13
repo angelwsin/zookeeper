@@ -2,6 +2,7 @@ package com.zookeeper.task_schedule;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 public class Core {
     
    static  Logger  log = LoggerFactory.getLogger(Core.class);
+   
+   static JavaSerializeComponet serialize = new JavaSerializeComponet();
    static  Thread process1;
     static{
          process1 = new Core().new ProcessTask();
@@ -73,16 +76,16 @@ public class Core {
     
     
     
+    
+    
     public static void  execute(byte[] data){
         
          try {
-             String ds = new  String(data);
-             System.out.println(ds);
-             String[] ps = ds.split(",");
-             if(ps==null||ps.length<3) return ;
-             URL url = new  URL("jar:file:/"+System.getProperty("user.dir")+"/job/"+ps[0]+"!/");
+            JobConf jobConf =  (JobConf) serialize.deCode(data);
+             if(Objects.isNull(jobConf)) return ;
+             URL url = new  URL(jobConf.getJobPath());
              JobLoader jobLoader = new JobLoader(new URL[]{url});
-             Method method =  jobLoader.loadClass(ps[1]).getDeclaredMethod(ps[2], String[].class);
+             Method method =  jobLoader.loadClass(jobConf.getBootClass()).getDeclaredMethod(jobConf.getExecuteMethod(), String[].class);
              //可变参数问题
              //编译器会兼容jdk 1.4的语法，即按照1.4的语法进行处理，即把字符串数组打散成为若干个单独的参数，这样就会产生参数个数不匹配的异常
              method.invoke(null, (Object)new String[]{});  

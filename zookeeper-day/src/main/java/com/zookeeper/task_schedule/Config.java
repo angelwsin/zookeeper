@@ -12,6 +12,9 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 public class Config {
     
     
+    static JavaSerializeComponet serialize = new JavaSerializeComponet();
+    
+    
     
    public static void main(String[] args) {
        
@@ -38,7 +41,13 @@ public class Config {
                 create.forPath("/download"); 
             }
             SetDataBuilder setData = fw.setData();
-            setData.forPath("/download", "task.jar,com.zookeeper.task_schedule.Task,main".getBytes());
+            JobConf jobConf = new JobConf();
+            jobConf.setJobPath("jar:file:/"+System.getProperty("user.dir")+"/job/task.jar!/");
+            jobConf.setExecuteMethod("main");
+            jobConf.setBootClass("com.zookeeper.task_schedule.Task");
+            jobConf.setJobNode("downLoadTask");
+            jobConf.setMonitorNode("downLoadTaskMonitor");
+            setData.forPath("/download", serialize.enCode(jobConf));
             Thread.sleep(Integer.MAX_VALUE);
         } catch (Exception e) {
             e.printStackTrace();
