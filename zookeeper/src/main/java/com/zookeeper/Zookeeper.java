@@ -1,5 +1,9 @@
 package com.zookeeper;
 
+import org.apache.zookeeper.server.quorum.QuorumPeerMain;
+
+import java.net.URL;
+
 public class Zookeeper {
 	
 	/**
@@ -112,7 +116,76 @@ public class Zookeeper {
 	 * 　Quorom 机制保证数据冗余和最终一致性的投票算法
 	 * 
 	 * 
-	 * 
+	 *
+	 *
+	 *
+	 *
+	 * zookeeper 启动入口org.apache.zookeeper.server.quorum.QuorumPeerMain
+     *
+     * PurgeTask(定时清理任务) --purges the snapshot and logs keeping the last num snapshots and the corresponding logs.
+	 *
+	 *
+	 *
+	 *
+	 *
+	 * DataTree  org.apache.zookeeper.server.DataTree#createNode(java.lang.String, byte[], java.util.List, long, int, long, long)
+	 *   创建node的逻辑
+	 *    1.根据path找到上级目录的path,在hash中查找到节点若节点不存在 抛异常  tips:创建节点它的上级目录必须存在
+	 *    2.从父类节点中查看此节点是否存在，若存在 抛出存在的异常
+	 *    3.创建新的节点 设置上级目录parent  上级目录中添加child 集合中
+	 *    4.新节点添加到hash表中 key=path val=node
+	 *    node中的属性
+	 *    [parent(上级目录),data(数据),acl(权限控制),stat(持久化到磁盘),children(子节点集合)]
+	 *    DataTree  hash表
+	 *    hash[path,...]
+	 *    DataTree 初始化的节点
+	 *    [root:"/",children]
+	 *
+	 *        [procDataNode:"/zookeeper",parent:root] the zookeeper nodes that acts as the management and status node
+	 *
+	 *           [quotaDataNode:"/zookeeper/quota",parent:procDataNode]=the zookeeper quota node that acts
+	 *
+     *
+     *
+	 *
+	 *
+	 * org.apache.zookeeper.server.persistence.FileTxnLog   事务文件格式
+	 *
+	 *
+	 * server.id=host:port(quorum 数据同步端口)[:port]（选举端口）
+	 *
+	 * org.apache.zookeeper.server.quorum.QuorumCnxManager.Listener  选举 bio 模式
+	 *
+	 * 选举连接规则
+	 * 1）小于自己的都关闭 自己连接到它
+	 * 2）每个socket连接都开启一个读线程 写线程
+	 * 读线程 org.apache.zookeeper.server.quorum.QuorumCnxManager.RecvWorker
+	 *
+	 * ArrayBlockingQueue<Message> recvQueue
+	 *
+	 * 写线程 org.apache.zookeeper.server.quorum.QuorumCnxManager.SendWorker
+	 *
+	 * ConcurrentHashMap<Long, ArrayBlockingQueue<ByteBuffer>> queueSendMap
+	 *
+	 * org.apache.zookeeper.server.quorum.FastLeaderElection 选举
+	 *
+	 * 选举有读和写两个线程来接受消息 然后派发给 socket中的读写队列中由socket读写线程处理
+	 *
+	 * 涉及到两个：1）选举leader 2)二阶段提交
+	 *
+	 *
+	 * 客户端连接
+	 * 1）客户端提交到zookeeper 如果没有选举leader即ZooKeeperServer不可用 会关闭连接
+	 *    延伸出 选举期间zookeeper是不可用的
+	 *
+	 * 2）当leader选举完成会启动LearnerCnxAcceptor 其他follower连接到此端口同步leader
+	 *    创建LeaderZooKeeperServer 用于处理二阶段提交
+     *
 	 */
+
+	public static void main(String[] args) {
+
+		QuorumPeerMain.main(new String[]{"/Users/mac/dev/git/zookeeper/zookeeper/src/main/resoures/zoo-2.cfg"});
+	}
 
 }

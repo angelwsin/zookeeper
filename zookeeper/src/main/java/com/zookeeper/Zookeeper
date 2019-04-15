@@ -1,0 +1,49 @@
+
+ZooKeeper: A Distributed Coordination Service for Distributed Applications
+           分布式协调服务
+
+implement higher level services for synchronization, configuration maintenance, and groups and naming.
+ It is designed to be easy to program to, and uses a data model styled after the familiar directory tree structure of file systems
+
+ 实现了高层次的synchronization，配置，分组，命名和目录服务，数据模型类似文件系统的目录树结构
+众所周知，协调服务很难做到。 他们特别容易出现竞争条件和死锁等错误。 ZooKeeper背后的动机是减轻分布式应用程序从头开始实施协调服务的责任
+
+
+
+Design Goals
+ZooKeeper允许分布式进程通过共享的层级命名空间相互协调，该命名空间的组织方式与标准文件系统类似。 名称空间由数据寄存器组成 - 在ZooKeeper用语中称为znodes
+- 这些与文件和目录类似。 与专为存储而设计的典型文件系统不同，ZooKeeper数据保存在内存中，这意味着ZooKeeper可以实现高吞吐量和低延迟数量。
+
+high performance, highly available, strictly ordered access  高性能，高可用，严格有序访问
+The performance aspects of ZooKeeper means it can be used in large, distributed systems.
+The reliability aspects keep it from being a single point of failure. The strict ordering means that sophisticated
+synchronization primitives can be implemented at the client.
+高性能意味着可以应用大型分布式系统，高可靠性避免单点失败的问题，严格的有序意味着精致同步原语可以在客户端实现
+
+ZooKeeper is replicated.(备份)
+  与它协调的分布式进程一样，ZooKeeper本身也可以在称为集合的一组主机上进行复制。
+
+
+ZooKeeper Service
+
+组成ZooKeeper服务的服务器必须彼此了解。 它们维护内存中的状态图像，以及持久性存储中的事务日志和快照。 只要大多数服务器可用，ZooKeeper服务就可用。
+
+客户端连接到单个ZooKeeper服务器。 客户端维护TCP连接，通过该连接发送请求，获取响应，获取监视事件以及发送心跳。
+如果与服务器的TCP连接中断，则客户端将连接到其他服务器
+
+ZooKeeper is ordered：
+       zooKeeper使用反映所有ZooKeeper事务顺序的数字标记每个更新。 后续操作可以使用该顺序来实现更高级别的抽象，例如同步原语
+
+ZooKeeper is fast. 它在“读取主导”工作负载中特别快。 ZooKeeper应用程序在数千台计算机上运行，并且在读取比写入更常见的情况下表现最佳，比率大约为10：1。
+
+Data model and the hierarchical namespace
+ The name space provided by ZooKeeper is much like that of a standard file system.
+  A name is a sequence of path elements separated by a slash (/). Every node in ZooKeeper's name space is identified by a path
+  zookeeper通过命名空间实现类似于标准的文件系统，使用/分割
+
+  ZooKeeper's Hierarchical(分层，等级) Namespace
+
+
+
+
+
