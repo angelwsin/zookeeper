@@ -124,7 +124,8 @@ public class Zookeeper {
      *
      * PurgeTask(定时清理任务) --purges the snapshot and logs keeping the last num snapshots and the corresponding logs.
 	 *
-	 *
+	 *在zookeeper上可以实现分布式服务同步（分布式锁），配置中心，分组，命名等
+	 *数据结构标准的文件结构
 	 *
 	 *
 	 *
@@ -180,6 +181,7 @@ public class Zookeeper {
 	 *
 	 * 2）当leader选举完成会启动LearnerCnxAcceptor 其他follower连接到此端口同步leader
 	 *    创建LeaderZooKeeperServer 用于处理二阶段提交
+	 *    使用 RequestProcessor 处理链
      *
 	 */
 
